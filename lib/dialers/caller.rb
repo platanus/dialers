@@ -47,10 +47,10 @@ module Dialers
 
     def http_call(request_options, current_retries = 0)
       call_api(request_options)
-    rescue Faraday::ParsingError => exception
-      raise Dialers::ParsingError, exception
+    rescue Faraday::ParsingError => _exception
+      raise Dialers::ParsingError.new(exception)
     rescue Faraday::ConnectionFailed => exception
-      raise Dialers::UnreachableError, exception
+      raise Dialers::UnreachableError.new(exception)
     rescue Faraday::TimeoutError => exception
       retry_call(request_options, exception, current_retries)
     end
@@ -59,7 +59,7 @@ module Dialers
       if idempotent_and_safe_method?(request_options.http_method) && current_retries <= MAX_RETRIES
         http_call(request_options, current_retries + 1)
       else
-        fail Dialers::UnreachableError, exception
+        fail Dialers::UnreachableError.new(exception)
       end
     end
 
@@ -81,7 +81,7 @@ module Dialers
     def get_api
       self.class::API
     rescue NameError
-      raise Dialers::InexistentApiError, self.class
+      raise Dialers::InexistentApiError.new(self.class)
     end
 
     def idempotent_and_safe_method?(http_method)

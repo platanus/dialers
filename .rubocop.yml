@@ -70,6 +70,9 @@ Style/BlockComments:
 Style/ModuleFunction:
   Enabled: false
 
+Style/RaiseArgs:
+  EnforcedStyle: compact
+
 Lint/AmbiguousOperator:
   Enabled: false
 

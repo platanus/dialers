@@ -13,7 +13,7 @@ module Dialers
     def transform_to_many(entity_class_or_decider, root: nil)
       items = get_rooted_items(root)
       unless items.is_a?(Array)
-        fail Dialers::ImpossibleTranformationError, response
+        fail Dialers::ImpossibleTranformationError.new(response)
       end
       items.map { |item| transform_attributes_to_object(entity_class_or_decider, item) }
     end
@@ -29,7 +29,7 @@ module Dialers
     def transform_attributes_to_object(entity_class_or_decider, attributes)
       entity_class = decide_entity_class(entity_class_or_decider)
       if entity_class.nil?
-        fail Dialers::ResponseError, response
+        fail Dialers::ResponseError.new(response)
       else
         Dialers::AssignAttributes.call(entity_class.new, attributes)
       end
