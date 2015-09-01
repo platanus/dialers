@@ -11,9 +11,11 @@ module Dialers
     end
 
     def transform_to_many(entity_class_or_decider, root: nil)
-      (root ? raw_data[root] : raw_data).map do |item|
-        transform_attributes_to_object(entity_class_or_decider, item)
+      items = get_rooted_items(root)
+      unless items.is_a?(Array)
+        fail Dialers::ImpossibleTranformationError, response
       end
+      items.map { |item| transform_attributes_to_object(entity_class_or_decider, item) }
     end
 
     def as_received
@@ -39,6 +41,16 @@ module Dialers
         entity_class_or_decider
       when Hash
         entity_class_or_decider[response.status]
+      end
+    end
+
+    def get_rooted_items(root)
+      if root.nil?
+        raw_data
+      elsif raw_data.is_a?(Array)
+        raw_data
+      else
+        raw_data[root]
       end
     end
   end
