@@ -98,7 +98,7 @@ repositories = github.user_repos("rails")
 repositories.first.name # maybe Rails
 ```
 
-You can use `post`, `put`, `patch`, `options`, `get` and `head` on the callers. You can use `transform_to_one` to make just one object and you can pass a hash to decide which object to instantiate depending on the response's status. For more info, you can check out [the caller's documentation](todo:linktodocumentation).
+You can use `post`, `put`, `patch`, `options`, `get` and `head` on the callers. You can use `transform_to_one` to make just one object and you can pass a hash to decide which object to instantiate depending on the response's status. For more info, you can check out [the caller's documentation](http://www.rubydoc.info/github/platanus/dialers/master/Dialers/Caller).
 
 ## Some Rails Nice Things
 
