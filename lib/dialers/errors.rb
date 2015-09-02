@@ -22,7 +22,12 @@ module Dialers
       if response.nil?
         super
       else
-        "\n\nSTATUS: #{response.status}\nURL: #{response.env.url}\nBODY: #{response.body}\n\n"
+        "\n
+        STATUS: #{response.status}
+        URL: #{response.env.url}
+        REQUEST HEADERS: #{response.env.request_headers}
+        HEADERS: #{response.env.response_headers}
+        BODY: #{response.body}\n\n"
       end
     end
 

@@ -16,12 +16,12 @@ module Github
 
     short_circuits.add(
       if: -> (response) { Dialers::Status.new(response.status).server_error? },
-      do: -> (response) { fail Dialers::ServerError, response }
+      do: -> (response) { fail Dialers::ServerError.new(response) }
     )
 
     short_circuits.add(
       if: -> (response) { Dialers::Status.new(response.status).is?(404) },
-      do: -> (response) { fail Dialers::NotFoundError, response }
+      do: -> (response) { fail Dialers::NotFoundError.new(response) }
     )
   end
 end

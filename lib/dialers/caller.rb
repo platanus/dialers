@@ -65,10 +65,10 @@ module Dialers
 
     def call_api(request_options)
       api.public_send(
-        request_options.http_method, request_options.url, request_options.query_params
+        request_options.http_method, request_options.url, request_options.query_params || {}
       ) do |request|
         request.body = request_options.payload
-        request_options.headers.each do |key, value|
+        (request_options.headers || {}).each do |key, value|
           request.headers[key] = value
         end
       end

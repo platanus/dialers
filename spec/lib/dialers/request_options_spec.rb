@@ -8,7 +8,4 @@ describe Dialers::RequestOptions do
   it { should respond_to(:query_params) }
   it { should respond_to(:payload) }
   it { should respond_to(:headers) }
-  it { should satisfy { |o| o.query_params == {} } }
-  it { should satisfy { |o| o.payload == {} } }
-  it { should satisfy { |o| o.headers == {} } }
 end
