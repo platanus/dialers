@@ -50,7 +50,7 @@ module Github
 end
 ```
 
-If you want to know more about how to configure Faraday to some different and more complex use cases, please check the [configuration documentation](todo:linktodocumentation). Now that the configuration is over, let's plug the caller into the wrapper to be able to create some methods.
+If you want to know more about how to configure Faraday to some different and more complex use cases, please check the [examples directory](examples/). Now that the configuration is over, let's plug the caller into the wrapper to be able to create some methods.
 
 ```ruby
 module Github
@@ -101,6 +101,8 @@ repositories.first.name # maybe Rails
 You can use `post`, `put`, `patch`, `options`, `get` and `head` on the callers. You can use `transform_to_one` to make just one object and you can pass a hash to decide which object to instantiate depending on the response's status. For more info, you can check out [the caller's documentation](todo:linktodocumentation).
 
 ## Some Rails Nice Things
+
+***NOTE: This a thing we want to make. It's not done yet but we want it to be this way***
 
 In Rails, you can use the next command to generate a dialer wrapper:
 

@@ -1,42 +1,79 @@
 module Dialers
   class Caller
-    HTTP_METHODS = [:post, :put, :patch, :get, :head, :options, :delete]
     IDEMPOTENT_AND_SAFE_METHODS = [:get, :head, :options]
-    BODY_HOLDER_METHODS = [:post, :put, :patch]
     MAX_RETRIES = 5
 
-    def self.setup_api(*args, &block)
-      api = Faraday.new(*args) { |faraday| block.call(faraday) }
-      const_set "API", api
-    end
+    class << self
+      # Setups a connection using {https://github.com/lostisland/faraday Faraday}.
+      #
+      # @param [Array] Arguments to pass to the faraday connection.
+      # @yield A block to pass to the faraday connection
+      #
+      # @return [Faraday::Connection] a connection
+      def setup_api(*args, &block)
+        api = Faraday.new(*args) { |faraday| block.call(faraday) }
+        const_set "API", api
+      end
 
-    def self.short_circuits
-      @short_circuits ||= Dialers::ShortCircuitsCollection.new
-    end
+      # @return [ShortCircuitsCollection] a collection of short circuits that can stop the process.
+      def short_circuits
+        @short_circuits ||= Dialers::ShortCircuitsCollection.new
+      end
 
-    BODY_HOLDER_METHODS.each do |http_method|
-      define_method(http_method) do |url, payload = {}, headers = {}|
-        options = RequestOptions.new
-        options.url = url
-        options.http_method = http_method
-        options.payload = payload
-        options.headers = headers
+      private
 
-        transform(http_call(options))
+      # @!macro [attach] query_holder_request_method
+      #   @method $1
+      #   Make a $1 request.
+      #
+      #   @param url [String] The path for the request.
+      #   @param params [Hash] The query params to attach to the url.
+      #   @param headers [Hash] The headers.
+      #
+      #   @return [Transformable] a transformable object
+      def query_holder_request_method(http_method)
+        define_method(http_method) do |url, params = {}, headers = {}|
+          options = RequestOptions.new
+          options.url = url
+          options.http_method = http_method
+          options.query_params = params
+          options.headers = headers
+
+          transform(http_call(options))
+        end
+      end
+
+      # @!macro [attach] body_holder_request_method
+      #   @method $1
+      #   Make a $1 request.
+      #
+      #   @param url [String] The path for the request.
+      #   @param payload [Hash] The request body.
+      #   @param headers [Hash] The headers.
+      #
+      #   @return [Transformable] a transformable object
+      def body_holder_request_method(http_method)
+        define_method(http_method) do |url, payload = {}, headers = {}|
+          options = RequestOptions.new
+          options.url = url
+          options.http_method = http_method
+          options.payload = payload
+          options.headers = headers
+
+          transform(http_call(options))
+        end
       end
     end
 
-    (HTTP_METHODS - BODY_HOLDER_METHODS).each do |http_method|
-      define_method(http_method) do |url, params = {}, headers = {}|
-        options = RequestOptions.new
-        options.url = url
-        options.http_method = http_method
-        options.query_params = params
-        options.headers = headers
+    public
 
-        transform(http_call(options))
-      end
-    end
+    query_holder_request_method :get
+    query_holder_request_method :head
+    query_holder_request_method :delete
+    query_holder_request_method :options
+    body_holder_request_method :post
+    body_holder_request_method :put
+    body_holder_request_method :patch
 
     private
 
@@ -86,10 +123,6 @@ module Dialers
 
     def idempotent_and_safe_method?(http_method)
       IDEMPOTENT_AND_SAFE_METHODS.include?(http_method)
-    end
-
-    def body_holder_method?(http_method)
-      BODY_HOLDER_METHODS.include?(http_method)
     end
   end
 end
