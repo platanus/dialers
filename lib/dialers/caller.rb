@@ -84,7 +84,7 @@ module Dialers
 
     def http_call(request_options, current_retries = 0)
       call_api(request_options)
-    rescue Faraday::ParsingError => _exception
+    rescue Faraday::ParsingError => exception
       raise Dialers::ParsingError.new(exception)
     rescue Faraday::ConnectionFailed => exception
       raise Dialers::UnreachableError.new(exception)
