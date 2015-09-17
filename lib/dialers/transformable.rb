@@ -2,6 +2,8 @@ module Dialers
   # This class provide some ways to transform a reponse into an object or a set of objects
   # based on what objects the user of this class wants to provide.
   class Transformable
+    attr_reader :response
+
     def initialize(response)
       self.response = response
       self.raw_data = response.body
@@ -51,7 +53,8 @@ module Dialers
 
     private
 
-    attr_accessor :raw_data, :response
+    attr_accessor :raw_data
+    attr_writer :response
 
     def transform_attributes_to_object(entity_class_or_decider, attributes)
       entity_class = decide_entity_class(entity_class_or_decider)
