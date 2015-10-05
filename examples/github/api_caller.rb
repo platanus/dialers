@@ -5,6 +5,14 @@ module Github
     TIMEOUT_IN_SECONDS = 5
     GITHUB_API_URL = "https://api.github.com"
 
+    as :authorized do |request, username|
+      request.headers["lallaa"] = username
+    end
+
+    as :super_heavy do |request|
+      request.header["heavy"] = "HEAVY"
+    end
+
     setup_api(url: GITHUB_API_URL) do |faraday|
       faraday.request :json
       faraday.request :request_headers, accept: "application/vnd.github.v3+json"
